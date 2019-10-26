@@ -9,7 +9,7 @@ def main():
 
 	for d in devices:
 		host = Host(d, ips)
-		print(host.id, host.name, host.tags)
+		print(host.id, host.name, host.tags, len(host.interface))
 
 if __name__ == "__main__":
 	main()
