@@ -28,6 +28,7 @@ devices = None
 vms = None
 ip_data = None
 interface_data = None
+role_data = None
 
 def get_device_data(id=None):
 	global devices
@@ -84,5 +85,19 @@ def get_interface_data(id=None):
 		return interface_data
 	else:
 		for i in interface_data:
+			if i["id"] == id:
+				return i
+
+def get_role_data(id=None):
+	global role_data
+
+	if role_data is None:
+		res = _do_req("api/dcim/device-roles")
+		role_data = _data_load(res.text)
+
+	if id is None:
+		return role_data
+	else:
+		for i in role_data:
 			if i["id"] == id:
 				return i

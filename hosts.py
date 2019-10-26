@@ -13,12 +13,23 @@ class Host:
 	def _readin_host_data(self, data):
 		self._data = {}
 		self._data["interfaces"] = []
+		self._data["hostrole"] = ""
 		if "vmtype" in data["custom_fields"].keys():
 			self._data["type"] = "virtual_machine"
 		else:
 			self._data["type"] = "device"
 		for k in data.keys():
 			self._data[k] = data[k]
+		self._get_role()
+
+	def _get_role(self):
+		role_id = 0
+		if self.type == "device":
+			role_id = self.device_role["id"]
+		else:
+			role_id = self.role["id"]
+
+		self.hostrole = inventory.get_role_data(role_id)["name"]
 
 	def _readin_ip_data(self, data):
 		for ip in data:
@@ -47,6 +58,7 @@ class Host:
 		to_print = "{ Host %s\n" % self.name
 		to_print += "\tType: %s \n" % self.type
 		to_print += "\tTags: %s \n" % self.tags
+		to_print += "\tRole: %s \n" % self.hostrole
 		if (len(self.interfaces) > 0):
 			to_print += "\tInterfaces:\n"
 			for i in self.interfaces:
