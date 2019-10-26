@@ -43,6 +43,17 @@ class Host:
 			return self._data
 		return self._data.get(key)
 
+	def __str__(self):
+		to_print = "{ Host %s\n" % self.name
+		to_print += "\tType: %s \n" % self.type
+		to_print += "\tTags: %s \n" % self.tags
+		if (len(self.interfaces) > 0):
+			to_print += "\tInterfaces:\n"
+			for i in self.interfaces:
+				to_print += "\t\t%s\t%s\t%s\n" % (i.name, i.ip, i.primary)
+		to_print += "}"
+		return to_print
+
 
 
 class Interface:

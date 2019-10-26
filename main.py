@@ -9,10 +9,7 @@ def main():
 
 	for d in devices+vms:
 		host = Host(d, ips)
-		print(host.name, host.tags)
-		if (len(host.interfaces) > 0):
-			for i in host.interfaces:
-				print("\t", i.name, i.ip, i.primary)
+		print(host)
 
 
 if __name__ == "__main__":
