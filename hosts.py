@@ -1,4 +1,7 @@
-# This class will hold all the information needed to configure any host 
+# This class will hold all the information needed to configure any host
+
+import ipaddress as ip
+import inventory
 
 class Host:
 	def __init__(self, host_data = None, ip_data=None):
@@ -9,16 +12,31 @@ class Host:
 
 	def _readin_host_data(self, data):
 		self._data = {}
-		self._data["interface"] = []
+		self._data["interfaces"] = []
+		if "vmtype" in data["custom_fields"].keys():
+			self._data["type"] = "virtual_machine"
+		else:
+			self._data["type"] = "device"
 		for k in data.keys():
 			self._data[k] = data[k]
 
 	def _readin_ip_data(self, data):
 		for ip in data:
 			if not ip["interface"] is None:
-				if not ip["interface"]["device"] is None:
-					if ip["interface"]["device"]["id"] == self.id:
-						self.interface.append(Interface(ip))
+				if not ip["interface"][self.type] is None:
+					if ip["interface"][self.type]["id"] == self.id:
+						interface = Interface(inventory.get_ip_data(ip["id"]))
+
+						if (interface.family == 4):
+							if not self.primary_ip4 is None:
+								if self.primary_ip4["address"] == str(interface.ip):
+									interface.primary = True
+						else:
+							if not self.primary_ip6 is None:
+								if self.primary_ip6["address"] == str(interface.ip):
+									interface.primary = True
+
+						self.interfaces.append(interface)
 
 	def __getattr__(self, key):
 		if key == "data":
@@ -30,5 +48,14 @@ class Host:
 class Interface:
 	def __init__(self, ip_data):
 		self.family = ip_data["family"]
-		self.addr_str = ip_data["addresses"]
+		self.primary = False
+
+		interface_data = inventory.get_interface_data(ip_data["interface"]["id"])
+		self.name = interface_data["name"]
+
+		if (self.family == 4):
+			self.ip = ip.IPv4Interface(ip_data["address"])
+		else:
+			self.ip = ip.IPv6Interface(ip_data["address"])
+
 		
