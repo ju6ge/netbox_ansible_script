@@ -6,7 +6,6 @@ import hosts
 import creds
 
 def _get_auth_url(api_url, data=None):
-	#print(api_url)
 	return r.get(api_url, headers={'Authorization': "Token %s" % creds.auth_token}, params=data)
 
 def _do_req(path):

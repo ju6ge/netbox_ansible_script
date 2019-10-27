@@ -29,7 +29,7 @@ class Host:
 		else:
 			role_id = self.role["id"]
 
-		self.hostrole = inventory.get_role_data(role_id)["name"]
+		self._data["hostrole"] = inventory.get_role_data(role_id)["name"]
 
 	def _readin_ip_data(self, data):
 		for ip in data:
@@ -80,5 +80,4 @@ class Interface:
 			self.ip = ip.IPv4Interface(ip_data["address"])
 		else:
 			self.ip = ip.IPv6Interface(ip_data["address"])
-
 		

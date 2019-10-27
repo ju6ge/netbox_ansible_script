@@ -1,0 +1,68 @@
+[1mdiff --git a/hosts.py b/hosts.py[m
+[1mindex 9c5c2b6..a8922fd 100644[m
+[1m--- a/hosts.py[m
+[1m+++ b/hosts.py[m
+[36m@@ -29,7 +29,7 @@[m [mclass Host:[m
+ 		else:[m
+ 			role_id = self.role["id"][m
+ [m
+[31m-		self.hostrole = inventory.get_role_data(role_id)["name"][m
+[32m+[m		[32mself._data["hostrole"] = inventory.get_role_data(role_id)["name"][m
+ [m
+ 	def _readin_ip_data(self, data):[m
+ 		for ip in data:[m
+[36m@@ -80,5 +80,4 @@[m [mclass Interface:[m
+ 			self.ip = ip.IPv4Interface(ip_data["address"])[m
+ 		else:[m
+ 			self.ip = ip.IPv6Interface(ip_data["address"])[m
+[31m-[m
+ 		[m
+[1mdiff --git a/inventory.py b/inventory.py[m
+[1mindex f485f9e..4f1c7bb 100644[m
+[1m--- a/inventory.py[m
+[1m+++ b/inventory.py[m
+[36m@@ -6,7 +6,6 @@[m [mimport hosts[m
+ import creds[m
+ [m
+ def _get_auth_url(api_url, data=None):[m
+[31m-	#print(api_url)[m
+ 	return r.get(api_url, headers={'Authorization': "Token %s" % creds.auth_token}, params=data)[m
+ [m
+ def _do_req(path):[m
+[1mdiff --git a/main.py b/main.py[m
+[1mindex 87bdded..ff25da9 100644[m
+[1m--- a/main.py[m
+[1m+++ b/main.py[m
+[36m@@ -1,15 +1,31 @@[m
+ import inventory[m
+[32m+[m[32mimport json[m
+[32m+[m
+[32m+[m[32mfrom ipaddress import IPv4Interface[m
+[32m+[m[32mfrom ipaddress import IPv6Interface[m
+ [m
+ from hosts import Host[m
+ [m
+[32m+[m[32mdef serialize(obj):[m
+[32m+[m	[32mif isinstance(obj, Host):[m
+[32m+[m		[32mreturn obj.__dict__["_data"][m
+[32m+[m	[32mif isinstance(obj, IPv4Interface):[m
+[32m+[m		[32mreturn str(obj)[m
+[32m+[m	[32mif isinstance(obj, IPv6Interface):[m
+[32m+[m		[32mreturn str(obj)[m
+[32m+[m	[32mreturn obj.__dict__[m
+[32m+[m
+ def main():[m
+ 	devices = inventory.get_device_data()[m
+ 	vms = inventory.get_vm_data()[m
+ 	ips = inventory.get_ip_data()[m
+ [m
+[32m+[m	[32mhosts = {}[m
+[32m+[m
+ 	for d in devices+vms:[m
+ 		host = Host(d, ips)[m
+[31m-		print(host)[m
+[32m+[m		[32mhosts[host.name] = host[m
+[32m+[m	[32mprint(json.dumps(hosts, default=serialize))[m
+ [m
+ [m
+ if __name__ == "__main__":[m
