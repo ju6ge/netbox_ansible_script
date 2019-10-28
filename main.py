@@ -1,3 +1,4 @@
+#!/bin/python3
 import inventory
 import json
 
@@ -20,12 +21,29 @@ def main():
 	vms = inventory.get_vm_data()
 	ips = inventory.get_ip_data()
 
+	ansible_inventory = {}
+	ansible_inventory["_meta"] = {}
+
 	hosts = {}
+
+	groups = {}
 
 	for d in devices+vms:
 		host = Host(d, ips)
 		hosts[host.name] = host
-	print(json.dumps(hosts, default=serialize))
+		role = host.hostrole
+		if role not in groups.keys():
+			groups[role] = {}
+			groups[role]["hosts"] = []
+			groups[role]["vars"] = {}
+			groups[role]["children"] = []
+		groups[role]["hosts"].append(host.name)
+
+	for role in groups.keys():
+		ansible_inventory[role] = groups[role]
+
+	ansible_inventory["_meta"]["hostvars"] = hosts
+	print(json.dumps(ansible_inventory, default=serialize))
 
 
 if __name__ == "__main__":
