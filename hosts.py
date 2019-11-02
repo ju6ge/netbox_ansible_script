@@ -14,6 +14,9 @@ class Host:
 		self._data = {}
 		self._data["interfaces"] = []
 		self._data["hostrole"] = ""
+		if data["primary_ip"]:
+			self._data["ansible_host"] = str(ip.ip_interface(data["primary_ip"]["address"]).ip)
+		#self._data["ansible_host"] = data["primary_ip"]["address"]
 		if "vmtype" in data["custom_fields"].keys():
 			self._data["type"] = "virtual_machine"
 		else:

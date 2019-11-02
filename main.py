@@ -38,6 +38,15 @@ def main():
 			groups[role]["vars"] = {}
 			groups[role]["children"] = []
 		groups[role]["hosts"].append(host.name)
+		tags = host.tags
+		for tag in tags:
+			tagstr = "tags_" + str(tag)
+			if tagstr not in groups.keys():
+				groups[tagstr] = {}
+				groups[tagstr]["hosts"] = []
+				groups[tagstr]["vars"] = {}
+				groups[tagstr]["children"] = []
+			groups[tagstr]["hosts"].append(host.name)
 
 	for role in groups.keys():
 		ansible_inventory[role] = groups[role]
