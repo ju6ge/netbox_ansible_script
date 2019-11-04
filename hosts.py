@@ -23,6 +23,12 @@ class Host:
 			self._data["type"] = "device"
 		for k in data.keys():
 			self._data[k] = data[k]
+		if self.data["primary_ip"]:
+			self._data["primary_ip"] = str(ip.ip_interface(data["primary_ip"]["address"]).ip)
+		if self.data["primary_ip4"]:
+			self._data["primary_ip4"] = str(ip.ip_interface(data["primary_ip4"]["address"]).ip)
+		if self.data["primary_ip6"]:
+			self._data["primary_ip6"] = str(ip.ip_interface(data["primary_ip6"]["address"]).ip)
 		self._get_role()
 
 	def _get_role(self):
@@ -43,11 +49,11 @@ class Host:
 
 						if (interface.family == 4):
 							if not self.primary_ip4 is None:
-								if self.primary_ip4["address"] == str(interface.ip):
+								if self.primary_ip4 == str(interface.ip.ip):
 									interface.primary = True
 						else:
 							if not self.primary_ip6 is None:
-								if self.primary_ip6["address"] == str(interface.ip):
+								if self.primary_ip6["address"] == str(interface.ip.ip):
 									interface.primary = True
 
 						self.interfaces.append(interface)
