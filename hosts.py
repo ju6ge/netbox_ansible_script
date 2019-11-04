@@ -82,11 +82,10 @@ class Interface:
 		self.family = ip_data["family"]
 		self.primary = False
 
-		interface_data = inventory.get_interface_data(ip_data["interface"]["id"])
-		self.name = interface_data["name"]
+		self.name = ip_data["interface"]["name"]
 
 		if (self.family == 4):
 			self.ip = ip.IPv4Interface(ip_data["address"])
-		else:
+		elif (self.family == 6):
 			self.ip = ip.IPv6Interface(ip_data["address"])
 		
