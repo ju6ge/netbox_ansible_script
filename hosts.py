@@ -12,23 +12,27 @@ class Host:
 
 	def _readin_host_data(self, data):
 		self._data = {}
-		self._data["interfaces"] = []
+		self._data["interfaces"] = {}
 		self._data["hostrole"] = ""
+
 		if data["primary_ip"]:
 			self._data["ansible_host"] = str(ip.ip_interface(data["primary_ip"]["address"]).ip)
 		#self._data["ansible_host"] = data["primary_ip"]["address"]
+
 		if "vmtype" in data["custom_fields"].keys():
 			self._data["type"] = "virtual_machine"
 		else:
 			self._data["type"] = "device"
 		for k in data.keys():
 			self._data[k] = data[k]
+
 		if self.data["primary_ip"]:
 			self._data["primary_ip"] = str(ip.ip_interface(data["primary_ip"]["address"]).ip)
 		if self.data["primary_ip4"]:
 			self._data["primary_ip4"] = str(ip.ip_interface(data["primary_ip4"]["address"]).ip)
 		if self.data["primary_ip6"]:
 			self._data["primary_ip6"] = str(ip.ip_interface(data["primary_ip6"]["address"]).ip)
+
 		self._get_role()
 
 	def _get_role(self):
@@ -45,18 +49,23 @@ class Host:
 			if not ip["interface"] is None:
 				if not ip["interface"][self.type] is None:
 					if ip["interface"][self.type]["id"] == self.id:
-						interface = Interface(inventory.get_ip_data(ip["id"]))
+						interface_name = ip["interface"]["name"]
+						if not interface_name in self.interfaces.keys():
+							self.interfaces[interface_name] = Interface(inventory.get_interface_data(ip["interface"]["id"]))
+						ip_struct = IP(ip)
+						#if not "name" in dir(self.interfaces[interface_name]):
+						#	print(ip["interface"]["id"], ip_struct.ip)
 
-						if (interface.family == 4):
+						if (ip_struct.family == 4):
 							if not self.primary_ip4 is None:
-								if self.primary_ip4 == str(interface.ip.ip):
-									interface.primary = True
+								if self.primary_ip4 == str(ip_struct.ip.ip):
+									ip_struct.primary = True
 						else:
 							if not self.primary_ip6 is None:
-								if self.primary_ip6["address"] == str(interface.ip.ip):
-									interface.primary = True
+								if self.primary_ip6["address"] == str(ip_struct.ip.ip):
+									ip_struct.primary = True
 
-						self.interfaces.append(interface)
+						self.interfaces[interface_name].add_ip(ip_struct)
 
 	def __getattr__(self, key):
 		if key == "data":
@@ -77,15 +86,22 @@ class Host:
 
 
 
-class Interface:
+class IP:
 	def __init__(self, ip_data):
-		self.family = ip_data["family"]
+		self.family = ip_data["family"]["value"]
 		self.primary = False
-
-		self.name = ip_data["interface"]["name"]
 
 		if (self.family == 4):
 			self.ip = ip.IPv4Interface(ip_data["address"])
 		elif (self.family == 6):
 			self.ip = ip.IPv6Interface(ip_data["address"])
 		
+class Interface:
+	def __init__(self, interface_data):
+		if not interface_data is None:
+			self.name = interface_data["name"]
+
+		self.ips = []
+
+	def add_ip(self, ip):
+		self.ips.append(ip)
