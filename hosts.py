@@ -97,6 +97,10 @@ class IP:
 class Interface:
 	def __init__(self, interface_data):
 		self.name = interface_data["name"]
+		self.enabled = interface_data["enabled"]
+
+		if not "mac_address" in interface_data.keys(): 
+			self.mac_address  = interface_data["mac_address"]
 
 		self.ips = []
 
