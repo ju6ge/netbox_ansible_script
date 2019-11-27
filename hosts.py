@@ -71,7 +71,7 @@ class Host:
 		if (len(self.interfaces) > 0):
 			to_print += "\tInterfaces:\n"
 			for i in self.interfaces:
-				to_print += "\t\t%s\t%s\t%s\n" % (i.name, i.ip, i.primary)
+				to_print += "\t\t%s\t%s\t%s\n" % (i.name, i.ip.ip, i.primary)
 		to_print += "}"
 		return to_print
 
