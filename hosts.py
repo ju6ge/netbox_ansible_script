@@ -53,8 +53,6 @@ class Host:
 						if not interface_name in self.interfaces.keys():
 							self.interfaces[interface_name] = Interface(inventory.get_interface_data(ip["interface"]["id"]))
 						ip_struct = IP(ip)
-						#if not "name" in dir(self.interfaces[interface_name]):
-						#	print(ip["interface"]["id"], ip_struct.ip)
 
 						if (ip_struct.family == 4):
 							if not self.primary_ip4 is None:
@@ -98,8 +96,7 @@ class IP:
 		
 class Interface:
 	def __init__(self, interface_data):
-		if not interface_data is None:
-			self.name = interface_data["name"]
+		self.name = interface_data["name"]
 
 		self.ips = []
 

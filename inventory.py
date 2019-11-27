@@ -73,12 +73,23 @@ def get_ip_data(id=None):
 				return i
 
 
+def get_interface_device_data():
+	res = _do_req("api/dcim/interfaces")
+	interface_data = _data_load(res.text)
+
+	return interface_data
+
+def get_interface_vm_data():
+	res = _do_req("api/virtualization/interfaces")
+	interface_data = _data_load(res.text)
+
+	return interface_data
+
 def get_interface_data(id=None):
 	global interface_data
 
 	if interface_data is None:
-		res = _do_req("api/dcim/interfaces")
-		interface_data = _data_load(res.text)
+		interface_data = get_interface_device_data() + get_interface_vm_data()
 
 	if id is None:
 		return interface_data
