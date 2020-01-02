@@ -3,7 +3,10 @@ import urllib
 import json
 
 import hosts
-import creds
+try:
+    import creds
+except ModuleNotFoundError:
+    import creds_env as creds
 
 def _get_auth_url(api_url, data=None):
 	return r.get(api_url, headers={'Authorization': "Token %s" % creds.auth_token}, params=data)
