@@ -98,6 +98,14 @@ class Interface:
 	def __init__(self, interface_data):
 		self.name = interface_data["name"]
 		self.enabled = interface_data["enabled"]
+		if interface_data["mode"]:
+			self.vlan_mode = interface_data["mode"]["label"]
+		if interface_data["untagged_vlan"]:
+			self.vlan_untagged_id = interface_data["untagged_vlan"]["vid"]
+			self.vlan_untagged_name = interface_data["untagged_vlan"]["name"]
+		if interface_data["tagged_vlans"]:
+			self.vlans_tagged = [{"id": i["vid"], "name": i["name"]} for i in interface_data["tagged_vlans"]]
+		
 
 		if not "mac_address" in interface_data.keys(): 
 			self.mac_address  = interface_data["mac_address"]
