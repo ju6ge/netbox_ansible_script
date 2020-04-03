@@ -107,7 +107,7 @@ class Interface:
 			self.vlans_tagged = [{"id": i["vid"], "name": i["name"]} for i in interface_data["tagged_vlans"]]
 		
 
-		if not "mac_address" in interface_data.keys(): 
+		if interface_data["mac_address"]:
 			self.mac_address  = interface_data["mac_address"]
 
 		self.ips = []
