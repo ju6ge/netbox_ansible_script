@@ -109,6 +109,7 @@ class Interface:
 
 		if interface_data["mac_address"]:
 			self.mac_address  = interface_data["mac_address"]
+		self.netbox_id = interface_data["id"]
 
 		self.ips = []
 
