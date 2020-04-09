@@ -6,6 +6,7 @@ from ipaddress import IPv4Interface
 from ipaddress import IPv6Interface
 
 from hosts import Host
+from service import Service
 
 def serialize(obj):
 	if isinstance(obj, Host):
@@ -20,6 +21,8 @@ def main():
 	devices = inventory.get_device_data()
 	vms = inventory.get_vm_data()
 	ips = inventory.get_ip_data()
+	services = inventory.get_service_data()
+
 
 	ansible_inventory = {}
 	ansible_inventory["_meta"] = {}
@@ -50,6 +53,17 @@ def main():
 
 	for role in groups.keys():
 		ansible_inventory[role] = groups[role]
+
+	for s in services:
+		serv = Service(s)
+		host = hosts[serv.host]
+
+		if host.services is None:
+			host._data["services"] = []
+
+		host._data["services"].append(serv)
+
+
 
 	ansible_inventory["_meta"]["hostvars"] = hosts
 	print(json.dumps(ansible_inventory, default=serialize))

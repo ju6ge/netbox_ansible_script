@@ -28,6 +28,7 @@ vms = None
 ip_data = None
 interface_data = None
 role_data = None
+service_data = None
 
 def get_device_data(id=None):
 	global devices
@@ -109,5 +110,19 @@ def get_role_data(id=None):
 		return role_data
 	else:
 		for i in role_data:
+			if i["id"] == id:
+				return i
+
+def get_service_data(id=None):
+	global service_data
+
+	if service_data is None:
+		res = _do_req("api/ipam/services")
+		service_data = _data_load(res.text)
+
+	if id is None:
+		return service_data
+	else:
+		for i in service_data:
 			if i["id"] == id:
 				return i
