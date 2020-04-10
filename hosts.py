@@ -88,6 +88,10 @@ class IP:
 	def __init__(self, ip_data):
 		self.family = ip_data["family"]["value"]
 		self.primary = False
+		if ip_data["dns_name"]:
+			self.dns_name = ip_data["dns_name"]
+
+
 
 		if (self.family == 4):
 			self.ip = ip.IPv4Interface(ip_data["address"])
@@ -106,9 +110,6 @@ class Interface:
 		if interface_data["tagged_vlans"]:
 			self.vlans_tagged = [{"id": i["vid"], "name": i["name"]} for i in interface_data["tagged_vlans"]]
 
-		if interface_data["dns_name"]:
-			self.dns_name = interface_data["dns_name"]
-		
 
 		if interface_data["mac_address"]:
 			self.mac_address  = interface_data["mac_address"]
