@@ -60,7 +60,7 @@ class Host:
 									ip_struct.primary = True
 						else:
 							if not self.primary_ip6 is None:
-								if self.primary_ip6["address"] == str(ip_struct.ip.ip):
+								if self.primary_ip6 == str(ip_struct.ip.ip):
 									ip_struct.primary = True
 
 						self.interfaces[interface_name].add_ip(ip_struct)
