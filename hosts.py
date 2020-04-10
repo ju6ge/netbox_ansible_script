@@ -109,6 +109,8 @@ class Interface:
 			self.vlan_untagged_name = interface_data["untagged_vlan"]["name"]
 		if interface_data["tagged_vlans"]:
 			self.vlans_tagged = [{"id": i["vid"], "name": i["name"]} for i in interface_data["tagged_vlans"]]
+		if interface_data["tags"]:
+			self.tags = interface_data["tags"]
 
 
 		if interface_data["mac_address"]:
