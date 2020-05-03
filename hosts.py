@@ -43,7 +43,7 @@ class Host:
 		elif self.role:
 			role_id = self.role["id"]
 
-		if self.role_id:
+		if role_id != 0:
 			self._data["hostrole"] = inventory.get_role_data(role_id)["name"]
 		else:
 			self._data["hostrole"] = "ungrouped"
