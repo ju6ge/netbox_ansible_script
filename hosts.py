@@ -19,12 +19,13 @@ class Host:
 			self._data["ansible_host"] = str(ip.ip_interface(data["primary_ip"]["address"]).ip)
 		#self._data["ansible_host"] = data["primary_ip"]["address"]
 
-		if "vmtype" in data["custom_fields"].keys():
-			self._data["type"] = "virtual_machine"
-		else:
-			self._data["type"] = "device"
 		for k in data.keys():
 			self._data[k] = data[k]
+
+		if 'device_role' in self._data.keys():
+			self._data['type'] = 'device'
+		else:
+			self._data['type'] = 'virtual_machine'
 
 		if self.data["primary_ip"]:
 			self._data["primary_ip"] = str(ip.ip_interface(data["primary_ip"]["address"]).ip)
@@ -37,12 +38,13 @@ class Host:
 
 	def _get_role(self):
 		role_id = 0
-		if self.type == "device":
+		if self.type == "device" and self.device_role:
 			role_id = self.device_role["id"]
-		else:
+		elif self.role:
 			role_id = self.role["id"]
 
-		self._data["hostrole"] = inventory.get_role_data(role_id)["name"]
+		if self.role_id:
+			self._data["hostrole"] = inventory.get_role_data(role_id)["name"]
 
 	def _readin_ip_data(self, data):
 		for ip in data:
