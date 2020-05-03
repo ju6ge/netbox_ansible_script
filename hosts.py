@@ -45,6 +45,8 @@ class Host:
 
 		if self.role_id:
 			self._data["hostrole"] = inventory.get_role_data(role_id)["name"]
+		else:
+			self._data["hostrole"] = "ungrouped"
 
 	def _readin_ip_data(self, data):
 		for ip in data:
